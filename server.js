@@ -21,11 +21,24 @@ app.get("/api/notes", function (req, res) {
   res.sendFile(DB_FILE);
 });
 
+// Create a new note
 app.post("/api/notes", function (req, res) {
   let jsonData = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
-    jsonData.push(req.body);
-    fs.writeFileSync(DB_FILE, JSON.stringify(jsonData), "utf8");
-    res.json(req.body);
+  let newNote = req.body;
+  newNote.id = jsonData.length + 1;
+  jsonData.push(newNote);
+  fs.writeFileSync(DB_FILE, JSON.stringify(jsonData), "utf8");
+  res.json(newNote);
+});
+
+// Delete a note
+app.delete("/api/notes/:id", function (req, res) {
+  let jsonData = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+  let filterJsonData = jsonData.filter((note) => note.id != req.params.id);
+  fs.writeFileSync(DB_FILE, JSON.stringify(filterJsonData), "utf8");
+  res.json({
+    id: req.params.id,
+  });
 });
 
 // Sends static assets that exist or falls back to the index.html
