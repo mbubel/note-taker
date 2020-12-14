@@ -6,6 +6,8 @@ let app = express();
 
 let PORT = process.env.PORT || 8080;
 
+const DB_FILE = path.join(__dirname, "./db/db.json");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -16,7 +18,14 @@ app.get("/notes", function (req, res) {
 
 // Returns all saved notes as JSON
 app.get("/api/notes", function (req, res) {
-  res.sendFile(path.join(__dirname, "./db/db.json"));
+  res.sendFile(DB_FILE);
+});
+
+app.post("/api/notes", function (req, res) {
+  let jsonData = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
+    jsonData.push(req.body);
+    fs.writeFileSync(DB_FILE, JSON.stringify(jsonData), "utf8");
+    res.json(req.body);
 });
 
 // Sends static assets that exist or falls back to the index.html
