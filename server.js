@@ -14,6 +14,11 @@ app.get("/notes", function (req, res) {
   res.sendFile(path.join(__dirname, "./public/notes.html"));
 });
 
+// Returns all saved notes as JSON
+app.get("/api/notes", function (req, res) {
+  res.sendFile(path.join(__dirname, "./db/db.json"));
+});
+
 // Sends static assets that exist or falls back to the index.html
 app.get("*", function (req, res) {
   let requestedFilePath = path.join(__dirname, "./public" + req.path);
