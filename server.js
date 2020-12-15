@@ -25,7 +25,16 @@ app.get("/api/notes", function (req, res) {
 app.post("/api/notes", function (req, res) {
   let jsonData = JSON.parse(fs.readFileSync(DB_FILE, "utf8"));
   let newNote = req.body;
-  newNote.id = jsonData.length + 1;
+
+  // Reducer function to grab the highest ID
+  let maxId = jsonData.reduce(
+    (accumulator, currentValue) =>
+      currentValue.id > accumulator ? currentValue.id : accumulator,
+    0
+  );
+
+  // Takes the high ID and adds 1
+  newNote.id = maxId + 1;
   jsonData.push(newNote);
   fs.writeFileSync(DB_FILE, JSON.stringify(jsonData), "utf8");
   res.json(newNote);
